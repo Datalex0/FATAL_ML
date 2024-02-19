@@ -6,6 +6,7 @@
 6- encodage pour les classifications (encodage(colonne-target))
 7- affichage des colinarités (colinearite())
 8- selection mannuelle des colonnes pour la regression(selection_colonne())
+9- detection de la standardisationdes données (detection_standardisation())
 
 X- affichage de la distribution des colonnes(affichage_distribution_colonnes())
 Y: affichage du nombre de lignes de chaque colonne (affichage_nombre_lignes_par_colonne())
