@@ -11,7 +11,7 @@ def unnamed_drop() :
 #affichage des titres de colonnes et des valeurs vides dessous
 def affichage_blanc() :
     valeur_manquantes = df.isna().sum()
-    print("la liste de vos colonnes : chaque colonne contient X valeurs manquantes ")
+    print("Nombre de valeur manquantes par colonne : ")
     print(valeur_manquantes)
 
     # selection manuelle des colonnes
@@ -64,4 +64,24 @@ def colinearite() :
         vmax=1,
         ax=ax
     )
-colinearite()
+
+def affichage_distribution_colonnes ():
+    # Affiche l'histogramme de distribution pour chaque colonne l'une après l'autre
+    plt.figure(figsize=(10, 6))
+
+    for column in df.columns:
+        plt.hist(df[column], bins=10, alpha=0.5, label=column)
+        plt.xlabel('Valeur')
+        plt.ylabel('Fréquence')
+        plt.title('Distribution des colonnes numériques')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
+def affichage_nombre_lignes_par_colonne():
+    nombre_de_valeurs_par_colonne = df.count()
+    print("Nombre total de valeurs par colonne :")
+    print(nombre_de_valeurs_par_colonne)
+
+
+
