@@ -48,7 +48,7 @@ def encodage(colonne_target):
         print(f'remplacement de : {i} par {x}' )
         x+=1
 
-        #afficher colinearités
+#afficher colinearités
 def colinearite() :
     mask = np.triu(df.select_dtypes("number").corr())
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -65,8 +65,8 @@ def colinearite() :
         ax=ax
     )
 
+# Affiche l'histogramme de distribution pour chaque colonne l'une après l'autre
 def affichage_distribution_colonnes ():
-    # Affiche l'histogramme de distribution pour chaque colonne l'une après l'autre
     plt.figure(figsize=(10, 6))
 
     for column in df.columns:
@@ -84,4 +84,14 @@ def affichage_nombre_lignes_par_colonne():
     print(nombre_de_valeurs_par_colonne)
 
 
+def detection_standardisation():
+    # définir un seuil de proximité de 0
+    threshold = 0.1
+    # tester si la deviation std et la moyenne sont proche de 0
+    close_to_zero_std = (df.std().abs() < threshold).all()
+    close_to_zero_mean = (df.mean().abs() < threshold).all()
 
+    if close_to_zero_std and close_to_zero_mean:
+        print("Vos données semblent déjà standardisées")
+    else:
+        print("Vos données ne semblent pas standardisées")
