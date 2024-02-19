@@ -19,6 +19,10 @@ from sklearn.svm import SVC, SVR
 from sklearn.model_selection import KFold
 import statsmodels.api as sm
 import itertools
+import seaborn as sns
+import matplotlib.pyplot as plt
+import statsmodels.formula.api as smf
+import re
 warnings.filterwarnings("ignore")
 
 def load_data(file_path, delimiter, decimal):
@@ -29,6 +33,14 @@ def load_data(file_path, delimiter, decimal):
     for column in df.columns:
         if df[column].dtype == 'object':
             df[column] = label_encoder.fit_transform(df[column].astype(str))
+    df=rename_columns(df)
+    return df
+
+def rename_columns(df):
+
+    def replace_special_characters(col_name):
+        return re.sub(r'\W+', '_', col_name).lower()
+    df.columns = [replace_special_characters(col) for col in df.columns]
     
     return df
 def select_columns_to_remove(df):
@@ -54,6 +66,10 @@ def select_target_variable(df):
 
     return selected_y
 
+def get_column_names(df, selected_y):
+    column_names = df.columns.tolist()
+    column_names.remove(selected_y)
+    return column_names
 
 def standardize_data(df):
     non_numeric_columns = [col for col in df.columns if not pd.api.types.is_numeric_dtype(df[col])]
@@ -207,6 +223,24 @@ def train_type_regression(df, selected_y, selected_type_reg):
         X_train, X_test = X.iloc[train_index], X.iloc[test_index]
         y_train, y_test = y.iloc[train_index], y.iloc[test_index]
        
+        data_train = df.loc[train_index]
+        data_test = df.loc[test_index]
+
+        equation = f"{selected_y} ~ {' + '.join(column_names)}"
+        lm = smf.ols(formula=equation, data=df.iloc[train_index]).fit()
+        y_hat = lm.predict(df.iloc[test_index][column_names])
+   
+        plt.scatter(data_test[selected_y].values,y_hat)
+        plt.plot(np.arange(0,50))
+        plt.show()
+
+        plt.scatter(y_test, y_hat)
+        plt.plot(np.arange(y_test.min(), y_test.max() + 1), np.arange(y_test.min(), y_test.max() + 1), color='red')  # Diagonale y=x
+        plt.xlabel('Valeurs réelles')
+        plt.ylabel('Prédictions')
+        plt.title(f'Fold {i+1} - Valeurs réelles vs Prédictions')
+        st.pyplot(plt)
+
         type_Reg.fit(X_train, y_train)
        
         y_pred = type_Reg.predict(X_test)
@@ -218,7 +252,7 @@ def train_type_regression(df, selected_y, selected_type_reg):
        
         liste_r2.append(r2)
 
-    st.write(f"Moyenne des R2 : {np.mean(liste_r2)}")
+    st.write(f"//////  Moyenne des R2 : {np.mean(liste_r2)}")
 
 
 
@@ -230,7 +264,7 @@ if 'selected_y' not in st.session_state:
     st.session_state['selected_y'] = None
 
 st.write("//////////////////////////////////////////////////////IMPORT//////////////////////////////////////////////////////")
-st.write('💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎')
+st.write('💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎💎')
 file_path = st.text_input("Entrez votre chemin de fichier", value="", key="nom_fichier_input")
 delimiter = st.text_input("Entrez votre délimiteur (par défaut : ,)", value=",", key="delimiter_input")
 decimal = st.text_input("Entrez votre décimal (par défaut : .)", value=".", key="decimal_input")
@@ -252,6 +286,7 @@ if st.session_state['df'] is not None and not st.session_state['df'].empty:
     st.write("///////////////////////////////////////////////////STANDARDIZATION///////////////////////////////////////////////////")
     standardize_data(st.session_state['df'])
     st.write("//////////////////////////////////////////////////////REGRESSION//////////////////////////////////////////////////////")
+    # st.write("🐕‍🦺")
     st.session_state['selected_y'] = select_target_variable(st.session_state['df'])
     train_linear_regression(st.session_state['df'], st.session_state['selected_y'])
 
