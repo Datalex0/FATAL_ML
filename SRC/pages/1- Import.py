@@ -38,13 +38,13 @@ choix = st.sidebar.selectbox(
 )
 
 if choix == 'DF Diabète':
-    df = pd.read_csv("diabete.csv")
+    df = pd.read_csv("SRC/diabete.csv")
     # df = pd.read_csv("C:/Users/murai/OneDrive/Documents/GitHub/FATAL_ML/SRC/diabete.csv")
     # if 'df' not in st.session_state:
     state_write(df)
 
 elif choix == 'DF Vin':
-    df = pd.read_csv("vin.csv")
+    df = pd.read_csv("SRC/vin.csv")
     # df = pd.read_csv("C:/Users/murai/OneDrive/Documents/GitHub/FATAL_ML/SRC/vin.csv")
     # if 'df' not in st.session_state:
     state_write(df)
