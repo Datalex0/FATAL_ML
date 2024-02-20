@@ -54,8 +54,8 @@ if empty_col_box:
     (suppression_colonne_vide(df))
 
 # Affichage des None
-button = st.sidebar.button('Affichage des valeurs manquantes')
-if button:
+na_box = st.sidebar.checkbox('Affichage des valeurs manquantes')
+if na_box:
     (affichage_blanc(df))
 dropna_box = st.sidebar.checkbox('Supprimer les valeurs manquantes')
 if dropna_box:
@@ -75,18 +75,20 @@ print_target(colonne_target)
 
 if isinstance(df[colonne_target][0], (int, float)):
     type_model = 'reg'
+    st.session_state['type_model'] = type_model
+    st.session_state['df'] = df
 else:
     type_model = 'class'    
     # Encodage pour les classifications
     encod_box = st.sidebar.checkbox('Encoder')
     if encod_box:
         encodage(df, colonne_target)
-st.session_state['type_model'] = type_model
-st.session_state['df'] = df
+    st.session_state['type_model'] = type_model
+    st.session_state['df'] = df
     
 # Affichage des colinarités
-button = st.sidebar.button('Affichage des colinéarités')
-if button:  
+colin_box = st.sidebar.checkbox('Affichage des colinéarités')
+if colin_box:  
     colinearite(df)
 
 st.dataframe(df, height=730)

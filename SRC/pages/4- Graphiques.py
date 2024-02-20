@@ -1,8 +1,9 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import learning_curve
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import classification_report,confusion_matrix
 
 # Configuration des dimensions & affichage de la page
 st.set_page_config(page_title="Graphiques", 
@@ -12,83 +13,31 @@ st.set_page_config(page_title="Graphiques",
 df = st.session_state['df']
 type_model = st.session_state['type_model']
 model_ML = st.session_state['model_ML']
-X = st.session_state['X']
+new_X = st.session_state['new_X']
 y = st.session_state['y']
 selected_model_ML = st.session_state['selected_model_ML']
+new_X_train = st.session_state['new_X_train']
+new_X_test = st.session_state['new_X_test']
+y_train = st.session_state['y_train']
+y_test = st.session_state['y_test']
 
 
+model_ML.fit(new_X_train, y_train)
+y_pred = model_ML.predict(new_X_test)
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+st.write(f"{selected_model_ML} MSE :", mse)
+st.write(f"{selected_model_ML} R2 Score :", r2)
 
-hyperparam_reg = {
-    'LinearRegression': {
-        'alpha': [0.1, 1.0, 10.0]
-    },
-    'Ridge': {
-        'alpha': [0.1, 1.0, 10.0]
-    },
-    'Lasso': {
-        'alpha': [0.1, 1.0, 10.0],
-        'selection': ['cyclic', 'random']
-    },
-    'ElasticNet': {
-        'alpha': [0.1, 1.0, 10.0],
-        'l1_ratio': [0.1, 0.5, 0.9]
-    },
-    'DecisionTreeRegressor': {
-        'max_depth': [None, 10, 20],
-        'min_samples_split': [2, 5, 10],
-        'min_samples_leaf': [1, 2, 4]
-    },
-    'RandomForestRegressor': {
-        'n_estimators': [50, 100, 200],
-        'max_features': ['auto', 'sqrt'],
-        'max_depth': [10, 20, None],
-        'min_samples_split': [2, 5, 10],
-        'min_samples_leaf': [1, 2, 4]
-    },
-    'SVR': {
-        'C': [0.1, 1.0, 10.0],
-        'epsilon': [0.01, 0.1, 0.2]
-    }
-}
-    
+if selected_model_ML in ["LogisticRegression", "DecisionTreeClassifier", "RandomForestClassifier", "SVC"]:
+    cm = confusion_matrix(y_test, y_pred) #MATRICE CONFUSION
+    cr = classification_report(y_test, y_pred) #MATRICE CONFUSION
+    st.write(f'\n -------------\\\ Matrice de confusion  ///-------------\n')
+    st.write(cm[:15, :15])
+            # Extraire les 10 premières et 10 dernières lignes du rapport de classification
+    st.write(cr)
 
 
-hyperparam_class = {
-    'LogisticRegression': {
-        'penalty': ['l1', 'l2'],
-        'C': [0.001, 0.01, 0.1, 1, 10],
-        'solver': ['liblinear', 'saga']
-    },
-    'DecisionTreeClassifier': {
-        'criterion': ['gini', 'entropy'],
-        'max_depth': [None, 10, 20],
-        'min_samples_split': [2, 5, 10],
-        'min_samples_leaf': [1, 2, 4]
-    },
-    'RandomForestClassifier': {
-        'n_estimators': [50, 100, 200],
-        'criterion': ['gini', 'entropy'],
-        'max_depth': [None, 10, 20],
-        'min_samples_split': [2, 5, 10],
-        'min_samples_leaf': [1, 2, 4],
-        'max_features': ['auto', 'sqrt']
-    },
-    'SVC': {
-        'C': [0.1, 1.0, 10.0],
-        'kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
-        'gamma': ['scale', 'auto']
-    }
-}
-
-
-search = GridSearchCV(
-		model_ML,
-		[hyperparam_reg[selected_model_ML] if type_model=='reg' else hyperparam_class[selected_model_ML] if type_model=='class' else None]	
-)
-
-search.fit(X,y)
-st.write('Meilleurs hyperparamètres : ', search.best_params_)
-st.write('Meilleur score de cross-validation : ', search.best_score_)
 
 # Ligne de séparation
 st.write("***")

@@ -125,9 +125,9 @@ def affichage_nombre_lignes_par_colonne(df):
 def selection_colonnes(df, best_columns) :
     liste_colonnes = df.columns.tolist()
     selection_col = st.sidebar.multiselect("Sélectionnez les colonnes", liste_colonnes, default=best_columns)
-    return selection_col
+    return df[selection_col]
 
-def standardisation(df):
+def standardisation(df, colonne_target):
     # définir un seuil de proximité de 0
     threshold = 0.1
     # tester si la deviation std et la moyenne sont proche de 0
@@ -140,18 +140,18 @@ def standardisation(df):
         st.write("Vos données ne semblent pas standardisées")
         standard_box = st.sidebar.checkbox('Standardiser')
         if standard_box:
-            standardize_data(df)
+            standardize_data(df, colonne_target)
 
-def standardize_data(df):
+def standardize_data(df, colonne_target):
     non_numeric_columns = [col for col in df.columns if not pd.api.types.is_numeric_dtype(df[col])]
-    non_standardizable_columns = [col for col in non_numeric_columns if col not in ['votre_colonne_a_exclure']]
+    non_standardizable_columns = [col for col in non_numeric_columns if col not in colonne_target]
     
     if non_standardizable_columns:
         st.write("Colonnes qui ne sont pas numériques et ne peuvent pas être standardisées :")
         for col in non_standardizable_columns:
             st.write(col)
     
-    standardizable_columns = [col for col in df.columns if col not in non_standardizable_columns]
+    standardizable_columns = [col for col in df.columns if col not in [non_standardizable_columns, colonne_target]]
     
     if standardizable_columns:
         scaler = StandardScaler()

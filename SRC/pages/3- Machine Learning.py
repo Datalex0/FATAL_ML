@@ -42,14 +42,12 @@ colonne_target = st.session_state['colonne_target']
 type_model = st.session_state['type_model']
 X = df.select_dtypes('number').drop(colonne_target, axis = 1)
 y= df[colonne_target]
-st.session_state['X'] = X
-st.session_state['y'] = y
 
 # Detection de la standardisation des données
-standardisation(df)
+standardisation(df, colonne_target)
 
 # Train Test Split
-X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=.2,random_state =42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2,random_state =42)
 
 lazy_box = st.sidebar.checkbox('Classer automatiquement les modèles')
 if lazy_box:
@@ -64,6 +62,7 @@ if lazy_box:
 
     models = models.reset_index(['Model'])
 
+
     #print(df_model_lazypredicted)
     list_models = ['Ridge','Lasso','LinearRegression','ElasticNet','DecisionTreeRegressor','RandomForestRegressor','SVR','DecisionTreeClassifier','RandomForestClassifier','SVC','LogisticRegression']
     df_models_dispos = pd.DataFrame()
@@ -73,6 +72,7 @@ if lazy_box:
     df_models_dispos.reset_index(inplace=True)
     df_models_dispos.drop(columns=['index'],inplace=True)
     df_models_dispos
+
 
 model_box = st.sidebar.checkbox('Choisir le modèle')
 if model_box:
@@ -111,15 +111,25 @@ if model_box:
 
 
 
-button = st.sidebar.button('Proposition de colonnes pertinentes')
+button = st.sidebar.checkbox('Proposition de colonnes pertinentes')
 if button:
     best_columns = calculate_optimal_features(df, model_ML())
 
 col_box = st.sidebar.checkbox('Choisir les colonnes')
 if col_box:
     # Selection mannuelle des colonnes pour la regression
-    selection_colonnes(df, best_columns)
-
+    selection_col = selection_colonnes(df, best_columns)
+    # liste_colonnes = df.columns.tolist()
+    # selection_col = st.multiselect("Sélectionnez les colonnes", liste_colonnes, default=best_columns)
+    new_X = selection_col.copy()
+    # Train Test Split
+    new_X_train, new_X_test, y_train, y_test = train_test_split(new_X, y,test_size=.2,random_state =42)
+    st.session_state['new_X'] = new_X
+    st.session_state['y'] = y
+    st.session_state['new_X_train'] = new_X_train
+    st.session_state['new_X_test'] = new_X_test
+    st.session_state['y_train'] = y_train
+    st.session_state['y_test'] = y_test
 
 
 param_box = st.sidebar.checkbox('Proposition des meilleurs hyperparamètres')
@@ -187,13 +197,12 @@ if param_box:
         }
     }
 
-
     search = GridSearchCV(
             model_ML(),
             [hyperparam_reg[selected_model_ML] if type_model=='reg' else hyperparam_class[selected_model_ML] if type_model=='class' else None]	
     )
 
-    search.fit(X,y)
+    search.fit(new_X,y)
     col_1, col_2 = st.columns(2)
     with col_1:
         st.write(f'Meilleurs hyperparamètres pour votre modèle {selected_model_ML} : ', search.best_params_)
@@ -204,5 +213,5 @@ col_box = st.sidebar.checkbox('Entraîner le modèle')
 if col_box:
     model = model_ML()
     model.set_params(**search.best_params_)
-    model.fit(X_train, y_train)
+    model.fit(new_X_train, y_train)
     st.write('Votre modèle est bien entraîné, retrouvez vos résultats sur la page suivante')
