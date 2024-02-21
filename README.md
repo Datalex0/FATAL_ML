@@ -1,10 +1,10 @@
 # Projet Machine Learning
 ## Membres du groupe 2
-Tanguy CHAUMETTE
-Alexis MURAIL
-Lucas BONNEAU
-Florence BOUCHART
-Abdeldjalil AISSASNOU
+Tanguy CHAUMETTE  
+Alexis MURAIL  
+Lucas BONNEAU  
+Florence BOUCHART  
+Abdeldjalil AISSASNOU  
 
 ## CONTEXTE
 Conception d’une application permettant d’entrainer et d’appliquer des modèles de machine learning adaptés au jeu de données fourni par l’utilisateur.
