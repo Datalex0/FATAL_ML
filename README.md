@@ -1,4 +1,4 @@
-### FATAL_ML
+# Projet Machine Learning
 ## CONTEXTE
 Conception d’une application permettant d’entrainer et d’appliquer des modèles de machine learning adaptés au jeu de données fourni par l’utilisateur.
 
@@ -15,12 +15,7 @@ Conception d’une application permettant d’entrainer et d’appliquer des mod
 - scikit-learn==1.4.1.post1
 - streamlit==1.31.1
 
-## Retour Projet
-
 ## Les éléments importants :
-- Le dashboard Power BI converti au format PDF
-- Le process d'import TSV
-- La Présentation Powerpoint
-- La Présentation au format PDF
-- Le code des mappers et reducers (en python)
-- Les exports CSV et PDF
+- [Le lien vers la démonstration streamlit :](https://fatalml.streamlit.app)
+- Les scripts Python
+- Les fichiers CSV
