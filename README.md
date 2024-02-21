@@ -16,6 +16,6 @@ Conception d’une application permettant d’entrainer et d’appliquer des mod
 - streamlit==1.31.1
 
 ## Les éléments importants :
-- [Le lien vers la démonstration streamlit :](https://fatalml.streamlit.app)
+- [Le lien vers la démonstration streamlit](https://fatalml.streamlit.app)
 - Les scripts Python
 - Les fichiers CSV
