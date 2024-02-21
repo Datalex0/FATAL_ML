@@ -101,13 +101,9 @@ if save_model:
     #sauvergarde du modèle pour utilisation ultérieure 
     with open('modele.pkl', 'wb') as fichier_modele:
         pickle.dump(model, fichier_modele)
-    # with open('model.pkl', 'rb') as f:
-    #     loaded_model = pickle.load(f)
-        
-# st.markdown(f"Download the model file [here](./{modele.pkl})")
-# st.download_button('modele.pkl', modele.pkl)
 
-with open("modele.pkl", "rb") as file:
+
+with open("SRC/modele.pkl", "rb") as file:
         model_bytes = file.read()
         st.sidebar.download_button(
         "Téléchargez votre modèle",
