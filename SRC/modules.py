@@ -1,29 +1,12 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-# import csv
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.model_selection import train_test_split
-# from sklearn.preprocessing import OneHotEncoder
-#from lazypredict.Supervised import LazyClassifier
-#from lazypredict.Supervised import LazyRegressor
-# from sklearn.metrics import classification_report,confusion_matrix
-# from sklearn.datasets import load_iris
-# from sklearn.neighbors import KNeighborsClassifier
-# import warnings
-# from ydata_profiling import ProfileReport
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
-# from sklearn.preprocessing import LabelEncoder
-# from sklearn.linear_model import Ridge, Lasso, ElasticNet, LogisticRegression
-# from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-# from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-# from sklearn.svm import SVC, SVR
-# from sklearn.model_selection import KFold
-# import statsmodels.api as sm
-# warnings.filterwarnings("ignore")
 import itertools
 
 
@@ -66,7 +49,7 @@ def suppression_blanc(df) :
 # selection colonne target
 def selection_target(df) :
     liste_colonnes = df.columns.tolist()
-    colonne_target = st.sidebar.selectbox("Selectionnez la colonne cible : ", liste_colonnes)
+    colonne_target = st.selectbox("Selectionnez la colonne cible : ", liste_colonnes)
     return colonne_target
 
 # encodage manuel pour les classifications
@@ -84,18 +67,20 @@ def colinearite(df) :
     mask = np.triu(df.select_dtypes("number").corr())
     fig, ax = plt.subplots(figsize=(10, 10))
     cmap = sns.diverging_palette(15, 160, n=11, s=100)
-
-    sns.heatmap(
-        df.select_dtypes("number").corr(),
-        mask=mask,
-        annot=True,
-        cmap=cmap,
-        center=0,
-        vmin=-1,
-        vmax=1,
-        ax=ax
-    )
-    st.pyplot(fig)
+    
+    col_1, col_2, col_3 = st.columns([1,3,1])
+    with col_2:
+        sns.heatmap(
+            df.select_dtypes("number").corr(),
+            mask=mask,
+            annot=True,
+            cmap=cmap,
+            center=0,
+            vmin=-1,
+            vmax=1,
+            ax=ax
+        )
+        st.pyplot(fig)
     
 # Affiche l'histogramme de distribution pour chaque colonne l'une après l'autre
 def affichage_distribution_colonnes (df):

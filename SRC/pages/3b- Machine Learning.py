@@ -1,33 +1,18 @@
 import streamlit as st
-# import numpy as np
 import pandas as pd
-# import csv
-# from modules import state_write
-# import matplotlib.pyplot as plt
-# import seaborn as sns
 from sklearn.model_selection import train_test_split
-# from sklearn.preprocessing import OneHotEncoder
 from customlazy.models import LazyClassifier, LazyRegressor
-# from lazypredict.Supervised import LazyRegressor
-# from sklearn.metrics import classification_report,confusion_matrix
-# from sklearn.datasets import load_iris
-# from sklearn.neighbors import KNeighborsClassifier
-# import warnings
-# from ydata_profiling import ProfileReport
-# from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
-# from sklearn.metrics import mean_squared_error, r2_score
-# from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import Ridge, Lasso, ElasticNet, LogisticRegression
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.svm import SVC, SVR
-# from sklearn.model_selection import KFold
 from sklearn.model_selection import GridSearchCV
-# import statsmodels.api as sm
-# warnings.filterwarnings("ignore")
-# import itertools
-from modules import *
+from modules import (
+    standardisation,
+    calculate_optimal_features,
+    selection_colonnes
+)
 
 
 
@@ -43,36 +28,36 @@ type_model = st.session_state['type_model']
 X = df.select_dtypes('number').drop(colonne_target, axis = 1)
 y= df[colonne_target]
 
-# Detection de la standardisation des données
-standardisation(df, colonne_target)
+# # Detection de la standardisation des données
+# standardisation(df, colonne_target)
 
-# Train Test Split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2,random_state =42)
+# # Train Test Split
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.2,random_state =42)
 
-lazy_box = st.sidebar.checkbox('Classer automatiquement les modèles')
-if lazy_box:
-    if type_model == 'reg':
-        #Regression
-        reg = LazyRegressor(verbose=0, ignore_warnings=False, custom_metric=None )
-        models,predictions = reg.fit(X_train, X_test, y_train, y_test)
-    else:
-        #Classification
-        clf = LazyClassifier(verbose=0, ignore_warnings=True, custom_metric=None)
-        models,predictions = clf.fit(X_train, X_test, y_train, y_test)
+# lazy_box = st.sidebar.checkbox('Classer automatiquement les modèles')
+# if lazy_box:
+#     if type_model == 'reg':
+#         #Regression
+#         reg = LazyRegressor(verbose=0, ignore_warnings=False, custom_metric=None )
+#         models,predictions = reg.fit(X_train, X_test, y_train, y_test)
+#     else:
+#         #Classification
+#         clf = LazyClassifier(verbose=0, ignore_warnings=True, custom_metric=None)
+#         models,predictions = clf.fit(X_train, X_test, y_train, y_test)
 
-    models = models.reset_index(['Model'])
+#     models = models.reset_index(['Model'])
 
 
-    #print(df_model_lazypredicted)
-    list_models = ['Ridge','Lasso','LinearRegression','ElasticNet','DecisionTreeRegressor','RandomForestRegressor','SVR','DecisionTreeClassifier','RandomForestClassifier','SVC','LogisticRegression']
-    df_models_dispos = pd.DataFrame()
-    for i,item in models['Model'].items() : 
-        if item in list_models : 
-            df_models_dispos = df_models_dispos._append(models.loc[i])
-    df_models_dispos.reset_index(inplace=True)
-    df_models_dispos.drop(columns=['index'],inplace=True)
-    df_models_dispos
-
+#     #print(df_model_lazypredicted)
+#     list_models = ['Ridge','Lasso','LinearRegression','ElasticNet','DecisionTreeRegressor','RandomForestRegressor','SVR','DecisionTreeClassifier','RandomForestClassifier','SVC','LogisticRegression']
+#     df_models_dispos = pd.DataFrame()
+#     for i,item in models['Model'].items() : 
+#         if item in list_models : 
+#             df_models_dispos = df_models_dispos._append(models.loc[i])
+#     df_models_dispos.reset_index(inplace=True)
+#     df_models_dispos.drop(columns=['index'],inplace=True)
+#     df_models_dispos
+df_models_dispos = st.session_state['df_models_dispos']
 
 model_box = st.sidebar.checkbox('Choisir le modèle')
 if model_box:
@@ -215,3 +200,4 @@ if col_box:
     model.set_params(**search.best_params_)
     model.fit(new_X_train, y_train)
     st.write('Votre modèle est bien entraîné, retrouvez vos résultats sur la page suivante')
+    st.session_state['model'] = model

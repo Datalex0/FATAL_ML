@@ -2,3 +2,5 @@
 enableCORS = false
 enableXsrfProtection = false
 enableWebsocketCompression = false
+[deprecation]
+showPyplotGlobalUse = false
