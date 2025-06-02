@@ -24,7 +24,6 @@ for colonne in df.columns:
 
 
 
-import streamlit as st
 
 tab1, tab2, tab3 = st.tabs(["Valeurs manquantes", "Colonne cible", "Corrélations"])
 with tab1:
